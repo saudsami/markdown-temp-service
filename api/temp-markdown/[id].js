@@ -1,4 +1,10 @@
-import { kv } from '@vercel/kv';
+// api/temp-markdown/[id].js
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 export default async function handler(req, res) {
   // Handle CORS preflight
@@ -22,8 +28,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Invalid ID format' });
     }
 
-    // Retrieve from Vercel KV
-    const data = await kv.get(`temp-markdown:${id}`);
+    // Retrieve from Redis
+    const data = await redis.get(`temp-markdown:${id}`);
 
     if (!data) {
       return res.status(404).json({ 
@@ -32,13 +38,13 @@ export default async function handler(req, res) {
       });
     }
 
-    // Check if expired (double-check since KV should auto-expire)
+    // Check if expired (double-check since Redis should auto-expire)
     const now = new Date();
     const expiresAt = new Date(data.expiresAt);
     
     if (now > expiresAt) {
       // Clean up expired entry
-      await kv.del(`temp-markdown:${id}`);
+      await redis.del(`temp-markdown:${id}`);
       return res.status(410).json({ 
         error: 'Gone',
         message: 'Temporary markdown file has expired'

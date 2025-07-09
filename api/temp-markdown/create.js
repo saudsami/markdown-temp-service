@@ -1,6 +1,10 @@
 // api/temp-markdown/create.js
-import { kv } from '@vercel/kv';
-import { nanoid } from 'nanoid';
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 export default async function handler(req, res) {
   // Handle CORS preflight
@@ -35,7 +39,7 @@ export default async function handler(req, res) {
     const expireHours = Math.min(Math.max(expiresInHours, 1), maxHours);
 
     // Generate unique ID
-    const id = nanoid(12);
+    const id = Math.random().toString(36).substring(2, 14); // 12 character ID
 
     // Set expiration time
     const expiresAt = new Date(Date.now() + expireHours * 60 * 60 * 1000);
@@ -51,8 +55,8 @@ export default async function handler(req, res) {
       referrer: req.headers.referer || req.headers.referrer || 'Unknown'
     };
 
-    // Store in Vercel KV with TTL
-    await kv.set(
+    // Store in Redis with TTL
+    await redis.set(
       `temp-markdown:${id}`,
       metadata,
       { ex: expireHours * 3600 } // TTL in seconds

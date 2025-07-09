@@ -1,5 +1,10 @@
 // api/health.js
-import { kv } from '@vercel/kv';
+import { Redis } from '@upstash/redis';
+
+const redis = new Redis({
+  url: process.env.UPSTASH_REDIS_REST_URL,
+  token: process.env.UPSTASH_REDIS_REST_TOKEN,
+});
 
 export default async function handler(req, res) {
   // Handle CORS preflight
@@ -15,22 +20,22 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Test KV connection
+    // Test Redis connection
     const testKey = 'health-check-test';
     const testValue = Date.now().toString();
     
-    await kv.set(testKey, testValue, { ex: 60 }); // 1 minute expiry
-    const retrievedValue = await kv.get(testKey);
-    await kv.del(testKey); // Clean up
+    await redis.set(testKey, testValue, { ex: 60 }); // 1 minute expiry
+    const retrievedValue = await redis.get(testKey);
+    await redis.del(testKey); // Clean up
     
-    const isKvHealthy = retrievedValue === testValue;
+    const isRedisHealthy = retrievedValue === testValue;
 
     const health = {
-      status: isKvHealthy ? 'healthy' : 'unhealthy',
+      status: isRedisHealthy ? 'healthy' : 'unhealthy',
       timestamp: new Date().toISOString(),
       version: '1.0.0',
       services: {
-        kv: isKvHealthy ? 'ok' : 'error'
+        redis: isRedisHealthy ? 'ok' : 'error'
       },
       uptime: process.uptime()
     };
@@ -38,7 +43,7 @@ export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
     
-    res.status(isKvHealthy ? 200 : 503).json(health);
+    res.status(isRedisHealthy ? 200 : 503).json(health);
 
   } catch (error) {
     console.error('Health check failed:', error);
@@ -48,7 +53,7 @@ export default async function handler(req, res) {
       timestamp: new Date().toISOString(),
       error: 'Health check failed',
       services: {
-        kv: 'error'
+        redis: 'error'
       }
     });
   }
