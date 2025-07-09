@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Markdown Temp Service</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
+        code { background: #f4f4f4; padding: 2px 4px; border-radius: 3px; }
+        pre { background: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Markdown Temporary Hosting Service</h1>
+    <p>This service provides temporary markdown file hosting for AI chat integrations.</p>
+    
+    <h2>API Endpoints</h2>
+    <ul>
+        <li><code>POST /api/temp-markdown/create</code> - Create temporary markdown file</li>
+        <li><code>GET /api/temp-markdown/{id}</code> - Retrieve markdown file</li>
+        <li><code>GET /api/health</code> - Health check</li>
+    </ul>
+    
+    <h2>Example Usage</h2>
+    <pre><code>// Create temporary markdown
+fetch('/api/temp-markdown/create', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({
+    content: '# My Markdown\n\nContent here...',
+    title: 'My Document',
+    expiresInHours: 24
+  })
+})
+.then(r => r.json())
+.then(data => console.log('URL:', data.url));</code></pre>
+</body>
+</html>

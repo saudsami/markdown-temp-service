@@ -1,0 +1,40 @@
+{
+  "version": 2,
+  "name": "markdown-temp-service",
+  "functions": {
+    "api/temp-markdown/create.js": {
+      "maxDuration": 10
+    },
+    "api/temp-markdown/[id].js": {
+      "maxDuration": 5
+    },
+    "api/health.js": {
+      "maxDuration": 5
+    }
+  },
+  "headers": [
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Access-Control-Allow-Methods",
+          "value": "GET, POST, OPTIONS"
+        },
+        {
+          "key": "Access-Control-Allow-Headers",
+          "value": "Content-Type, Authorization"
+        }
+      ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/",
+      "destination": "/public/index.html"
+    }
+  ]
+}

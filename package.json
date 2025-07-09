@@ -1,0 +1,32 @@
+{
+  "name": "markdown-temp-service",
+  "version": "1.0.0",
+  "description": "Temporary markdown file hosting service for AI chat integrations",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'No build step needed for serverless functions'",
+    "deploy": "vercel --prod",
+    "test": "node test/api.test.js"
+  },
+  "dependencies": {
+    "@vercel/kv": "^1.0.1",
+    "nanoid": "^5.0.0"
+  },
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  },
+  "keywords": [
+    "markdown",
+    "temporary",
+    "hosting",
+    "ai",
+    "documentation"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/markdown-temp-service"
+  }
+}
