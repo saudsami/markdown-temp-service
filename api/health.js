@@ -20,15 +20,24 @@ export default async function handler(req, res) {
   }
 
   try {
+    // Check if environment variables exist
+    if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+      throw new Error('Missing Redis environment variables');
+    }
+
     // Test Redis connection
     const testKey = 'health-check-test';
     const testValue = Date.now().toString();
+    
+    console.log('Testing Redis connection...');
     
     await redis.set(testKey, testValue, { ex: 60 }); // 1 minute expiry
     const retrievedValue = await redis.get(testKey);
     await redis.del(testKey); // Clean up
     
     const isRedisHealthy = retrievedValue === testValue;
+
+    console.log(`Redis test result: ${isRedisHealthy ? 'SUCCESS' : 'FAILED'}`);
 
     const health = {
       status: isRedisHealthy ? 'healthy' : 'unhealthy',
@@ -37,7 +46,14 @@ export default async function handler(req, res) {
       services: {
         redis: isRedisHealthy ? 'ok' : 'error'
       },
-      uptime: process.uptime()
+      uptime: process.uptime(),
+      // Debug info (remove after testing)
+      debug: {
+        hasUrl: !!process.env.UPSTASH_REDIS_REST_URL,
+        hasToken: !!process.env.UPSTASH_REDIS_REST_TOKEN,
+        urlPrefix: process.env.UPSTASH_REDIS_REST_URL?.substring(0, 30) + '...',
+        tokenPrefix: process.env.UPSTASH_REDIS_REST_TOKEN?.substring(0, 10) + '...'
+      }
     };
 
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -47,13 +63,25 @@ export default async function handler(req, res) {
 
   } catch (error) {
     console.error('Health check failed:', error);
+    console.error('Error details:', {
+      message: error.message,
+      stack: error.stack,
+      hasUrl: !!process.env.UPSTASH_REDIS_REST_URL,
+      hasToken: !!process.env.UPSTASH_REDIS_REST_TOKEN
+    });
     
     res.status(503).json({
       status: 'unhealthy',
       timestamp: new Date().toISOString(),
-      error: 'Health check failed',
+      error: error.message || 'Health check failed',
       services: {
         redis: 'error'
+      },
+      // Debug info (remove after testing)
+      debug: {
+        hasUrl: !!process.env.UPSTASH_REDIS_REST_URL,
+        hasToken: !!process.env.UPSTASH_REDIS_REST_TOKEN,
+        errorType: error.constructor.name
       }
     });
   }
