@@ -1,11 +1,6 @@
 // api/temp-markdown/[id].js
 import { Redis } from '@upstash/redis';
 
-const redis = new Redis({
-  url: process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN,
-});
-
 export default async function handler(req, res) {
   // Handle CORS preflight
   if (req.method === 'OPTIONS') {
@@ -23,10 +18,20 @@ export default async function handler(req, res) {
   try {
     const { id } = req.query;
 
-    // Validate ID format
-    if (!id || typeof id !== 'string' || id.length !== 12) {
+    // Updated validation - allow 8-20 characters (more flexible)
+    if (!id || typeof id !== 'string' || id.length < 8 || id.length > 20) {
       return res.status(400).json({ error: 'Invalid ID format' });
     }
+
+    // Check for valid characters (alphanumeric)
+    if (!/^[a-zA-Z0-9]+$/.test(id)) {
+      return res.status(400).json({ error: 'Invalid ID format' });
+    }
+
+    const redis = new Redis({
+      url: process.env.UPSTASH_REDIS_REST_URL,
+      token: process.env.UPSTASH_REDIS_REST_TOKEN,
+    });
 
     // Retrieve from Redis
     const data = await redis.get(`temp-markdown:${id}`);
