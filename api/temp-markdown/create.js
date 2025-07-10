@@ -74,9 +74,9 @@ export default async function handler(req, res) {
     console.log(`Created temp markdown: ${id}, size: ${content.length} bytes, IP: ${metadata.clientIp}`);
 
     // Construct the URL
-    const baseUrl = process.env.VERCEL_URL 
-      ? `https://${process.env.VERCEL_URL}`
-      : `${req.headers['x-forwarded-proto'] || 'http'}://${req.headers.host}`;
+    const baseUrl = process.env.BASE_URL || 
+                   (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 
+                   `${req.headers['x-forwarded-proto'] || 'http'}://${req.headers.host}`);
     
     const url = `${baseUrl}/api/temp-markdown/${id}`;
 
