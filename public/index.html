@@ -1,36 +1,233 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Markdown Temp Service</title>
+    <title>Markdown Temporary Hosting Service</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Secure temporary markdown file hosting for AI chat integrations and documentation sharing">
     <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-        code { background: #f4f4f4; padding: 2px 4px; border-radius: 3px; }
-        pre { background: #f4f4f4; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        body { 
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+            max-width: 900px; 
+            margin: 0 auto; 
+            padding: 20px; 
+            line-height: 1.6;
+            color: #333;
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid #e1e5e9;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #7f8c8d;
+            font-size: 1.1em;
+        }
+        .status {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+            padding: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .status.error {
+            background: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        h2 {
+            color: #2c3e50;
+            border-bottom: 1px solid #e1e5e9;
+            padding-bottom: 5px;
+        }
+        code { 
+            background: #f8f9fa; 
+            padding: 2px 6px; 
+            border-radius: 4px; 
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9em;
+        }
+        pre { 
+            background: #f8f9fa; 
+            border: 1px solid #e9ecef;
+            padding: 15px; 
+            border-radius: 6px; 
+            overflow-x: auto;
+            font-size: 0.9em;
+        }
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        .endpoint {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-left: 4px solid #007bff;
+            border-radius: 0 4px 4px 0;
+        }
+        .method {
+            font-weight: bold;
+            color: #007bff;
+        }
+        .auth-required {
+            color: #dc3545;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .feature {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #28a745;
+        }
+        .feature h3 {
+            margin-top: 0;
+            color: #2c3e50;
+        }
+        .footer {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e1e5e9;
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
     </style>
 </head>
 <body>
-    <h1>Markdown Temporary Hosting Service</h1>
-    <p>This service provides temporary markdown file hosting for AI chat integrations.</p>
-    
+    <div class="header">
+        <h1>Markdown Temporary Hosting Service</h1>
+        <p>Secure temporary markdown file hosting for AI chat integrations and documentation sharing</p>
+    </div>
+
+    <div id="status" class="status">
+        🔄 Checking service status...
+    </div>
+
+    <div class="features">
+        <div class="feature">
+            <h3>🔒 Secure Access</h3>
+            <p>API key authentication ensures only authorized applications can create files</p>
+        </div>
+        <div class="feature">
+            <h3>⏰ Auto-Expiring</h3>
+            <p>Files automatically delete after 24 hours (configurable up to 7 days)</p>
+        </div>
+        <div class="feature">
+            <h3>🤖 AI-Optimized</h3>
+            <p>Designed for ChatGPT, Claude, and other AI assistants to easily read documentation</p>
+        </div>
+        <div class="feature">
+            <h3>🌍 Global CDN</h3>
+            <p>Fast access worldwide via Vercel's edge network</p>
+        </div>
+    </div>
+
     <h2>API Endpoints</h2>
-    <ul>
-        <li><code>POST /api/temp-markdown/create</code> - Create temporary markdown file</li>
-        <li><code>GET /api/temp-markdown/{id}</code> - Retrieve markdown file</li>
-        <li><code>GET /api/health</code> - Health check</li>
-    </ul>
     
+    <div class="endpoint">
+        <div><span class="method">POST</span> <code>/api/temp-markdown/create</code> <span class="auth-required">🔑 Auth Required</span></div>
+        <p>Create a temporary markdown file. Returns a public URL for accessing the content.</p>
+    </div>
+
+    <div class="endpoint">
+        <div><span class="method">GET</span> <code>/api/temp-markdown/{id}</code></div>
+        <p>Retrieve markdown content by file ID. No authentication required for reading.</p>
+    </div>
+
+    <div class="endpoint">
+        <div><span class="method">GET</span> <code>/api/health</code></div>
+        <p>Service health check. Returns status of the service and database connection.</p>
+    </div>
+
     <h2>Example Usage</h2>
-    <pre><code>// Create temporary markdown
-fetch('/api/temp-markdown/create', {
+    <pre><code>// Create temporary markdown file
+const response = await fetch('/api/temp-markdown/create', {
   method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
+  headers: { 
+    'Content-Type': 'application/json',
+    'X-API-Key': 'your-api-key-here'
+  },
   body: JSON.stringify({
-    content: '# My Markdown\n\nContent here...',
+    content: '# My Documentation\n\nThis is markdown content...',
     title: 'My Document',
     expiresInHours: 24
   })
-})
-.then(r => r.json())
-.then(data => console.log('URL:', data.url));</code></pre>
+});
+
+const data = await response.json();
+console.log('Public URL:', data.url);
+// URL: https://markdown-temp-service.vercel.app/api/temp-markdown/abc123
+
+// The URL can be shared with AI assistants or used for previewing
+window.open(data.url, '_blank');</code></pre>
+
+    <h2>Request/Response Examples</h2>
+
+    <h3>Create Request</h3>
+    <pre><code>{
+  "content": "# API Documentation\n\n## Overview\nThis API allows...",
+  "title": "API Docs",
+  "expiresInHours": 24
+}</code></pre>
+
+    <h3>Create Response</h3>
+    <pre><code>{
+  "success": true,
+  "id": "abc123def456",
+  "url": "https://markdown-temp-service.vercel.app/api/temp-markdown/abc123def456",
+  "title": "API Docs",
+  "expiresAt": "2025-07-10T12:00:00.000Z",
+  "expiresInHours": 24,
+  "contentLength": 58,
+  "message": "Temporary markdown file created successfully"
+}</code></pre>
+
+    <h2>Authentication</h2>
+    <p>Creating files requires an API key. Include it in the request header:</p>
+    <pre><code>X-API-Key: your-api-key-here</code></pre>
+    <p>Reading files (GET requests) does not require authentication.</p>
+
+    <div class="footer">
+        <p>Powered by Vercel • Redis storage by Upstash • Built for AI integrations</p>
+        <p>Files are automatically deleted after expiration • No permanent storage</p>
+    </div>
+
+    <script>
+        // Check service health on page load
+        async function checkHealth() {
+            const statusDiv = document.getElementById('status');
+            try {
+                const response = await fetch('/api/health');
+                const health = await response.json();
+                
+                if (health.status === 'healthy') {
+                    statusDiv.innerHTML = '✅ Service is healthy and operational';
+                    statusDiv.className = 'status';
+                } else {
+                    statusDiv.innerHTML = '⚠️ Service is experiencing issues';
+                    statusDiv.className = 'status error';
+                }
+            } catch (error) {
+                statusDiv.innerHTML = '❌ Service is currently unavailable';
+                statusDiv.className = 'status error';
+            }
+        }
+
+        // Check health when page loads
+        checkHealth();
+    </script>
 </body>
 </html>
